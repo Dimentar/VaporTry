@@ -37,7 +37,6 @@ public func configure(_ app: Application) throws {
 //    }
     
     /// swift run Run serve --env production
-    /// # NOTE: toolbox command is not accepting env in the current beta
     /// vapor build && vapor run serve --env production
     
 //    print(app.directory.workingDirectory)

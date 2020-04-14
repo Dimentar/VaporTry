@@ -11,10 +11,8 @@ import Fluent
 struct GalaxyMiddleware: ModelMiddleware {
     // Runs when a model is created
     func create(model: Galaxy, on db: Database, next: AnyModelResponder) -> EventLoopFuture<Void> {
-//        return next.create(model, on: db)
-        
         // The model can be altered here before it is created
-//        model.name = "<New Galaxy Name>"
+        // model.name = "<New Galaxy Name>"
 
         return next.create(model, on: db).map {
             // Once the galaxy has been created, the code here will be executed

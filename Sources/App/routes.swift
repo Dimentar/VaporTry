@@ -10,22 +10,22 @@ func routes(_ app: Application) throws {
         return "Hello, world!"
     }
 
+    // Todo
     let todoController = TodoController()
     app.get("todos", use: todoController.index)
-    app.get("todos", ":todoID", use: todoController.show)
+    app.get("todos", ":id", use: todoController.show)
     app.post("todos", use: todoController.create)
     app.put("todos", use: todoController.update)
-    app.on(.DELETE, "todos", ":todoID", use: todoController.delete)
+    app.on(.DELETE, "todos", ":id", use: todoController.delete)
     
     // Galaxies
-    app.get("galaxies") { req in
-        Galaxy.query(on: req.db).with(\.$stars).all()
-    }
-    app.post("galaxies") { req -> EventLoopFuture<Galaxy> in
-        let galaxy = try req.content.decode(Galaxy.self)
-        return galaxy.create(on: req.db)
-            .map { galaxy }
-    }
+    let galaxyController = GalaxyController()
+    app.get("galaxies", use: galaxyController.index)
+    app.get("galaxies", ":id", use: galaxyController.show)
+    app.post("galaxies", use: galaxyController.create)
+    app.put("galaxies", ":id", use: galaxyController.update)
+    app.delete("galaxies", ":id", use: galaxyController.delete)
+    
     app.get("galaxies", "new") { req -> EventLoopFuture<Galaxy> in
         let galaxy = Galaxy(name: "Milky Way")
         return galaxy.create(on: req.db)
