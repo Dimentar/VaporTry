@@ -3,13 +3,18 @@ import Vapor
 
 struct GalaxyController {
     func index(req: Request) throws -> EventLoopFuture<[Galaxy]> {
-        Galaxy.query(on: req.db)
-            .with(\.$stars)
-            .all()
+        Galaxy.query(on: req.db).all()
     }
     
     func show(req: Request) throws -> EventLoopFuture<Galaxy> {
-        Galaxy.find(req.parameters.get("id"), on: req.db)
+        guard let id = req.parameters.get("id", as: UUID.self) else {
+            return req.eventLoop.makeFailedFuture(Abort(.notFound))
+        }
+        
+        return Galaxy.query(on: req.db)
+            .filter(\.$id == id)
+            .with(\.$stars)
+            .first()
             .unwrap(or: Abort(.notFound))
     }
 
