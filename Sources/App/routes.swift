@@ -23,7 +23,7 @@ func routes(_ app: Application) throws {
     app.get("galaxies", use: galaxyController.index)
     app.get("galaxies", ":id", use: galaxyController.show)
     app.post("galaxies", use: galaxyController.create)
-    app.put("galaxies", ":id", use: galaxyController.update)
+    app.put("galaxies", use: galaxyController.update)
     app.delete("galaxies", ":id", use: galaxyController.delete)
     
     app.get("galaxies", "new") { req -> EventLoopFuture<Galaxy> in
@@ -38,8 +38,7 @@ func routes(_ app: Application) throws {
     }
     app.post("stars") { req -> EventLoopFuture<Star> in
         let star = try req.content.decode(Star.self)
-        return star.create(on: req.db)
-            .map { star }
+        return star.create(on: req.db).map { star }
     }
     app.get("stars", "new") { req -> EventLoopFuture<Star> in
         Galaxy.query(on: req.db).all()
@@ -47,8 +46,7 @@ func routes(_ app: Application) throws {
             .unwrap(or: Abort(.notFound))
             .flatMap {
                 let star = Star(name: "Sun", galaxyId: $0)
-                return star.create(on: req.db)
-                    .map { star }
+                return star.create(on: req.db).map { star }
             }
     }
     
@@ -89,7 +87,7 @@ func routes(_ app: Application) throws {
     
     // Login
     
-    let passwordProtected = app.grouped(User.authenticator().middleware())
+    let passwordProtected = app.grouped(User.authenticator())
     
     passwordProtected.post("login") { req -> EventLoopFuture<UserToken> in
         let user = try req.auth.require(User.self)
@@ -99,7 +97,7 @@ func routes(_ app: Application) throws {
             .map { token }
     }
     
-    let tokenProtected = app.grouped(UserToken.authenticator().middleware())
+    let tokenProtected = app.grouped(UserToken.authenticator())
     
     tokenProtected.get("me") { req -> User in
         try req.auth.require(User.self)

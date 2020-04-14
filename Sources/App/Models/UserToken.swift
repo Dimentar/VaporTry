@@ -30,7 +30,7 @@ final class UserToken: Model, Content {
     }
 }
 
-extension UserToken: ModelUserToken {
+extension UserToken: ModelTokenAuthenticatable {
     static let valueKey = \UserToken.$value
     static let userKey = \UserToken.$user
 

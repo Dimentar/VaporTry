@@ -51,7 +51,7 @@ extension User.Create: Validatable {
     }
 }
 
-extension User: ModelUser {
+extension User: ModelAuthenticatable {
     static var usernameKey: KeyPath<User, Field<String>> {
         \User.$email
     }
